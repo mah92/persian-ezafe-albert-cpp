@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <onnxruntime_cxx_api.h>
-#include <sentencepiece_processor.h>
+#include "sentencepiece_minimal.h"
 
 class EzafeDetector {
 public:
@@ -25,7 +25,7 @@ private:
     Ort::Env env_;
     std::unique_ptr<Ort::Session> session_;
     Ort::MemoryInfo mem_info_{Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault)};
-    sentencepiece::SentencePieceProcessor tokenizer_;
+    sentencepiece_minimal::SentencePieceProcessor tokenizer_;
 
     static constexpr int64_t kMaxLength = 128;
     static constexpr int64_t kPadId = 0;

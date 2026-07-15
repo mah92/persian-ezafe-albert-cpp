@@ -18,28 +18,20 @@ endif()
 message(STATUS "ONNX Runtime lib: ${ONNX_RUNTIME_LIB}")
 message(STATUS "ONNX Runtime include: ${ONNX_RUNTIME_INCLUDE}")
 
-# Find SentencePiece
-find_library(SENTENCEPIECE_LIB sentencepiece HINTS /usr/local/lib)
-find_path(SENTENCEPIECE_INCLUDE sentencepiece_processor.h HINTS /usr/local/include)
-
-if(NOT SENTENCEPIECE_LIB)
-    message(FATAL_ERROR "SentencePiece library not found")
-endif()
-
 set(SOURCES
     src/ezafe_detector.cpp
     src/main.cpp
+    third_party/sentencepiece_minimal/sentencepiece_minimal.cpp
 )
 
 add_executable(ezafe_detector ${SOURCES})
 target_include_directories(ezafe_detector PRIVATE
     src
+    third_party/sentencepiece_minimal
     ${ONNX_RUNTIME_INCLUDE}
-    ${SENTENCEPIECE_INCLUDE}
 )
 target_link_libraries(ezafe_detector PRIVATE
     ${ONNX_RUNTIME_LIB}
-    ${SENTENCEPIECE_LIB}
 )
 
 # Copy model directory to build output (same pattern as hush_cpp)

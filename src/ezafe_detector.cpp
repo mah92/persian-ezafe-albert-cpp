@@ -8,9 +8,8 @@ EzafeDetector::EzafeDetector(const std::string& onnx_path,
     : env_(ORT_LOGGING_LEVEL_WARNING, "ezafe")
 {
     // Load SentencePiece tokenizer
-    auto status = tokenizer_.Load(spiece_path);
-    if (!status.ok())
-        throw std::runtime_error("Failed to load SentencePiece model: " + status.ToString());
+    if (!tokenizer_.Load(spiece_path))
+        throw std::runtime_error("Failed to load SentencePiece model: " + spiece_path);
 
     // Load ONNX model (same pattern as hush_enhance_onnx.cpp)
     Ort::SessionOptions session_options;
@@ -30,9 +29,8 @@ std::vector<EzafeDetector::Result> EzafeDetector::predict(
     word_ids.push_back(-1);      // [CLS] → no word
 
     for (size_t wi = 0; wi < words.size(); ++wi) {
-        std::vector<int> ids;
-        tokenizer_.Encode(words[wi], &ids);
-        for (auto id : ids) {
+        auto encode_result = tokenizer_.Encode(words[wi]);
+        for (auto id : encode_result.ids) {
             input_ids.push_back(static_cast<int64_t>(id));
             word_ids.push_back(static_cast<int>(wi));
         }
